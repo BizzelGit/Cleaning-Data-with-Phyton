@@ -1,0 +1,56 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import codecademylib3_seaborn
+import glob
+
+files = glob.glob("state*.csv")
+
+df_list = []
+for filename in files:
+  data = pd.read_csv(filename)
+  df_list.append(data)
+  
+us_census = pd.concat(df_list)
+
+print(us_census.head())
+print(us_census.dtypes)
+
+incomesplit = us_census['Income'].str.split("$")
+
+us_census['Income'] = incomesplit.str.get(1)
+us_census.Income = pd.to_numeric(us_census.Income)
+print(us_census.head())
+print(us_census.dtypes)
+
+name_split = us_census['GenderPop'].str.split("_")
+us_census['Men'] = name_split.str.get(0)
+us_census['Women'] = name_split.str.get(1)
+
+print(us_census)
+
+men_split = us_census['Men'].str.split("M")
+us_census['Men'] = men_split.str.get(0)
+us_census.Men = pd.to_numeric(us_census.Men)
+women_split = us_census['Women'].str.split("W")
+us_census['Women'] = women_split.str.get(0)
+us_census.Women = pd.to_numeric(us_census.Men)
+
+print(us_census.head())
+print(us_census.dtypes)
+
+plt.scatter(us_census.Women, us_census.Income) 
+plt.show()
+
+us_census.Women.fillna(us_census.TotalPop - us_census.Men)
+
+print(us_census)
+
+us_census.duplicated()
+us_census.drop_duplicates()
+
+plt.scatter(us_census.Women, us_census.Income) 
+plt.show()
+
+
+
